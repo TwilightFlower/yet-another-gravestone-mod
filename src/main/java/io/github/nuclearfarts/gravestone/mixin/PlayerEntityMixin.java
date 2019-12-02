@@ -57,17 +57,19 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 		BlockPos.Mutable checkPos = new BlockPos.Mutable();
 		for(int x = playerPos.getX() + 5; x >= playerPos.getX() - 5; x--) {
 			checkPos.setX(x);
-			for(int y = clampY(playerPos.getY()) + 5; x >= MathHelper.clamp(playerPos.getY() - 5, 1, 255); y--) {
+			for(int y = clampY(playerPos.getY()) + 5; y >= clampY(playerPos.getY()) - 5; y--) {
 				checkPos.setY(y);
-				for(int z = playerPos.getZ() + 5; x >= playerPos.getZ() + 5; z--) {
+				for(int z = playerPos.getZ() + 5; z >= playerPos.getZ() - 5; z--) {
 					checkPos.setZ(z);
 					if(canPlaceGrave(checkPos)) {
-						return checkPos.toImmutable();
+						return drop(checkPos);
 					}
 				}
 			}
 		}
+		System.out.println("could not find pos");
 		checkPos.set(playerPos);
+		checkPos.setY(clampY(playerPos.getY()));
 		while(world.getBlockState(checkPos).getBlock() == Blocks.BEDROCK) {
 			checkPos.setY(checkPos.getY() + 1);
 		}
@@ -85,6 +87,23 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	
 	@Unique
 	private boolean canPlaceGrave(BlockPos pos) {
-		return !(pos.getY() < 0 || pos.getY() > 255) && (world.getBlockState(pos).isAir() || world.getBlockState(pos).getCollisionShape(world, pos).isEmpty());
+		System.out.println(!(pos.getY() < 0 || pos.getY() > 255));
+		System.out.println(world.getBlockState(pos).isAir() || !((BlockAccessor)world.getBlockState(pos).getBlock()).getCollidable());
+		return !(pos.getY() < 0 || pos.getY() > 255) && (world.getBlockState(pos).isAir() || !((BlockAccessor)world.getBlockState(pos).getBlock()).getCollidable());
+	}
+	
+	@Unique
+	private BlockPos drop(BlockPos pos) {
+		BlockPos.Mutable searchPos = new BlockPos.Mutable(pos);
+		int i = 0;
+		for(int y = pos.getY() - 1; y > 1 && i < 10; y--) {
+			i++;
+			searchPos.setY(clampY(y));
+			if(!world.getBlockState(searchPos).isAir()) {
+				searchPos.setY(clampY(y + 1));
+				return searchPos.toImmutable();
+			}
+		}
+		return pos;
 	}
 }

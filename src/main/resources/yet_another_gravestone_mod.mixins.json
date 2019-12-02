@@ -3,7 +3,8 @@
 	"package": "io.github.nuclearfarts.gravestone.mixin",
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
-		"PlayerEntityMixin"
+		"PlayerEntityMixin",
+		"BlockAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
