@@ -23,7 +23,6 @@ public class GravestoneBlockEntity extends BlockEntity {
 		ListTag stacks = (ListTag)tag.get("Items");
 		if(stacks != null) {
 			for(Tag t : stacks) {
-				System.out.println(t);
 				inventory.add(ItemStack.fromTag((CompoundTag)t));
 			}
 		}

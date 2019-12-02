@@ -28,10 +28,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 		super(type, world);
 	}
 
-	@Redirect(at = @At(value = "INVOKE", target = "drop(Lnet/minecraft/entity/damage/DamageSource;)V"), method = "onDeath(Lnet/minecraft/entity/damage/DamageSource;)V")
+	@Redirect(at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.drop(Lnet/minecraft/entity/damage/DamageSource;)V"), method = "onDeath(Lnet/minecraft/entity/damage/DamageSource;)V")
 	private void dropRedirect(ServerPlayerEntity self, DamageSource source) {
-		
-		//PlayerEntity self = (PlayerEntity)(LivingEntity)this;
 		List<ItemStack> items = new ArrayList<>();
 		items.addAll(self.inventory.main);
 		items.addAll(self.inventory.armor);
