@@ -1,0 +1,11 @@
+{
+	"required": true,
+	"package": "io.github.nuclearfarts.gravestone.mixin",
+	"compatibilityLevel": "JAVA_8",
+	"mixins": [
+		"PlayerEntityMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

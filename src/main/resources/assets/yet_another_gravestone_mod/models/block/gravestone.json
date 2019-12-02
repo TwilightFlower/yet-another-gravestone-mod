@@ -1,0 +1,24 @@
+{
+	"credit": "Made with Blockbench",
+	"textures": {
+		"0": "yet_another_gravestone_mod:block/gravestone_back",
+		"1": "yet_another_gravestone_mod:block/gravestone_front",
+		"2": "yet_another_gravestone_mod:block/gravestone_bottom_top",
+		"3": "yet_another_gravestone_mod:block/gravestone_sides",
+		"particle": "yet_another_gravestone_mod:block/gravestone_back"
+	},
+	"elements": [
+		{
+			"from": [3, 0, 3],
+			"to": [13, 12, 5],
+			"faces": {
+				"north": {"uv": [0, 0, 10, 12], "texture": "#0"},
+				"east": {"uv": [0, 0, 12, 2], "rotation": 90, "texture": "#3"},
+				"south": {"uv": [0, 0, 10, 12], "texture": "#1"},
+				"west": {"uv": [0, 0, 12, 2], "rotation": 270, "texture": "#3"},
+				"up": {"uv": [0, 0, 10, 2], "texture": "#2"},
+				"down": {"uv": [0, 0, 10, 2], "texture": "#2"}
+			}
+		}
+	]
+}

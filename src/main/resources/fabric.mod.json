@@ -1,0 +1,28 @@
+{
+	"schemaVersion": 1,
+	"id": "yet_another_gravestone_mod",
+	"version": "${version}",
+	"name": "Yet Another Gravestone Mod",
+	"description": "Because Fabric somehow didn't have one.",
+	"authors": [
+		"NuclearFarts"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/yet-another-gravestone-mod",
+		"sources": "https://github.com/nuclearfarts/yet-another-gravestone-mod"
+	},
+	"license": "LGPLv3",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.nuclearfarts.gravestone.GravestoneMod"
+		]
+	},
+	"mixins": [
+		"yet_another_gravestone_mod.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.4.0",
+		"fabric": "*"
+	}
+}
