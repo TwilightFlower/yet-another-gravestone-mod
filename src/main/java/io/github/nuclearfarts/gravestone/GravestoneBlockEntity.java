@@ -12,6 +12,7 @@ import net.minecraft.nbt.Tag;
 public class GravestoneBlockEntity extends BlockEntity {
 
 	public List<ItemStack> inventory = new ArrayList<>();
+	public int xp = 0;
 	
 	public GravestoneBlockEntity() {
 		super(GravestoneMod.GRAVESTONE_BLOCK_ENTITY);
@@ -26,6 +27,7 @@ public class GravestoneBlockEntity extends BlockEntity {
 				inventory.add(ItemStack.fromTag((CompoundTag)t));
 			}
 		}
+		xp = tag.getInt("XP");
 	}
 	
 	public CompoundTag toTag(CompoundTag tag) {
@@ -37,6 +39,7 @@ public class GravestoneBlockEntity extends BlockEntity {
 			}
 		}
 		tag.put("Items", list);
+		tag.putInt("XP", xp);
 		return tag;
 	}
 	

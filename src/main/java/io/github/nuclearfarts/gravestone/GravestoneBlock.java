@@ -30,6 +30,7 @@ public class GravestoneBlock extends Block implements BlockEntityProvider {
 			System.out.println(s);
 			Block.dropStack(world, pos, s);
 		}
+		player.addExperience(((GravestoneBlockEntity)be).xp);
 	}
 	
 	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, EntityContext ctx) {

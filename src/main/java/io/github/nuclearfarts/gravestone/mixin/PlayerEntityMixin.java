@@ -1,13 +1,20 @@
 package io.github.nuclearfarts.gravestone.mixin;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.item.ItemUsageContext;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -17,34 +24,40 @@ import java.util.List;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import io.github.nuclearfarts.gravestone.GravestoneBlockEntity;
 import io.github.nuclearfarts.gravestone.GravestoneMod;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
 	
-	private PlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
+	
+	protected PlayerEntityMixin(EntityType<? extends LivingEntity> type, World world) {
 		super(type, world);
 	}
 
-	@Redirect(at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.drop(Lnet/minecraft/entity/damage/DamageSource;)V"), method = "onDeath(Lnet/minecraft/entity/damage/DamageSource;)V")
-	private void dropRedirect(ServerPlayerEntity self, DamageSource source) {
-		List<ItemStack> items = new ArrayList<>();
-		items.addAll(self.inventory.main);
-		items.addAll(self.inventory.armor);
-		items.addAll(self.inventory.offHand);
-		self.inventory.main.clear();
-		self.inventory.armor.clear();
-		self.inventory.offHand.clear();
+	@Inject(method = "dropInventory()V", at = @At("HEAD"))
+	private void dropInv(CallbackInfo info) {
+		if(!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
+			PlayerEntity self = (PlayerEntity)(LivingEntity) this;
+			List<ItemStack> items = new ArrayList<>();
+			items.addAll(self.inventory.main);
+			items.addAll(self.inventory.armor);
+			items.addAll(self.inventory.offHand);
+			self.inventory.main.clear();
+			self.inventory.armor.clear();
+			self.inventory.offHand.clear();
+			GravestoneMod.runDropHandlers(self, items);
+			
+			BlockPos gravePos = findGravePos();
+			world.setBlockState(gravePos, GravestoneMod.GRAVESTONE.getDefaultState());
+			GravestoneBlockEntity be = (GravestoneBlockEntity) world.getBlockEntity(gravePos);
 		
-		BlockPos gravePos = findGravePos();
-		world.setBlockState(gravePos, GravestoneMod.GRAVESTONE.getDefaultState());
-		GravestoneBlockEntity be = (GravestoneBlockEntity) world.getBlockEntity(gravePos);
-		be.inventory = items;
-		be.markDirty();
-		
-		this.drop(source); //if a mod adds custom equipment, it might need this to drop properly.
+			be.inventory = items;
+			be.markDirty();
+		}
 	}
 	
 	@Unique
@@ -67,7 +80,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 				}
 			}
 		}
-		System.out.println("could not find pos");
 		checkPos.set(playerPos);
 		checkPos.setY(clampY(playerPos.getY()));
 		while(world.getBlockState(checkPos).getBlock() == Blocks.BEDROCK) {
@@ -87,9 +99,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 	
 	@Unique
 	private boolean canPlaceGrave(BlockPos pos) {
-		System.out.println(!(pos.getY() < 0 || pos.getY() > 255));
-		System.out.println(world.getBlockState(pos).isAir() || !((BlockAccessor)world.getBlockState(pos).getBlock()).getCollidable());
-		return !(pos.getY() < 0 || pos.getY() > 255) && (world.getBlockState(pos).isAir() || !((BlockAccessor)world.getBlockState(pos).getBlock()).getCollidable());
+		BlockState state = world.getBlockState(pos);
+		return !(pos.getY() < 0 || pos.getY() > 255) && (state.isAir() || state.canReplace(new ItemPlacementContext(new ItemUsageContext((PlayerEntity)(LivingEntity)this, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos), Direction.UP, pos, true)))) || !((BlockAccessor)state.getBlock()).getCollidable());
 	}
 	
 	@Unique
