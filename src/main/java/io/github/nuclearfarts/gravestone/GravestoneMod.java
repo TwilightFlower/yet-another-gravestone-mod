@@ -19,7 +19,9 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 public class GravestoneMod implements ModInitializer {
 	
@@ -57,5 +59,14 @@ public class GravestoneMod implements ModInitializer {
 		for(GravestoneDropHandler handler : COMPAT_HANDLERS) {
 			handler.handle(player, graveInv);
 		}
+	}
+	
+	public static Runnable placeGraveRunnable(World world, BlockPos pos, List<ItemStack> inv) {
+		return () -> {
+			world.setBlockState(pos, GRAVESTONE.getDefaultState());
+			GravestoneBlockEntity be = (GravestoneBlockEntity) world.getBlockEntity(pos);
+			be.inventory = inv;
+			be.markDirty();
+		};
 	}
 }

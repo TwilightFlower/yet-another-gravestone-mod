@@ -8,6 +8,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.ServerTask;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -27,10 +29,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.nuclearfarts.gravestone.GravestoneBlockEntity;
 import io.github.nuclearfarts.gravestone.GravestoneMod;
 
-@Mixin(PlayerEntity.class)
+@Mixin(ServerPlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
 	
 	
@@ -38,7 +39,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 		super(type, world);
 	}
 
-	@Inject(method = "dropInventory()V", at = @At("HEAD"))
+	@Inject(method = "onDeath(Lnet/minecraft/entity/damage/DamageSource;)V", at = @At(value = "INVOKE", target = "net/minecraft/server/network/ServerPlayerEntity.drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
 	private void dropInv(CallbackInfo info) {
 		if(!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
 			PlayerEntity self = (PlayerEntity)(LivingEntity) this;
@@ -50,13 +51,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 			self.inventory.armor.clear();
 			self.inventory.offHand.clear();
 			GravestoneMod.runDropHandlers(self, items);
-			
 			BlockPos gravePos = findGravePos();
-			world.setBlockState(gravePos, GravestoneMod.GRAVESTONE.getDefaultState());
-			GravestoneBlockEntity be = (GravestoneBlockEntity) world.getBlockEntity(gravePos);
-		
-			be.inventory = items;
-			be.markDirty();
+			world.getServer().send(new ServerTask(world.getServer().getTicks(), GravestoneMod.placeGraveRunnable(world, gravePos, items)));
 		}
 	}
 	
