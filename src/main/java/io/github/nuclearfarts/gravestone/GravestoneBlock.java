@@ -27,7 +27,6 @@ public class GravestoneBlock extends Block implements BlockEntityProvider {
 	
 	public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity be, ItemStack stack) {
 		for(ItemStack s : ((GravestoneBlockEntity)be).inventory) {
-			System.out.println(s);
 			Block.dropStack(world, pos, s);
 		}
 		player.addExperience(((GravestoneBlockEntity)be).xp);
