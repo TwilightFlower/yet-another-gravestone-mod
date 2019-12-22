@@ -5,13 +5,12 @@ import java.util.List;
 
 import io.github.nuclearfarts.gravestone.GravestoneBlockEntity;
 import io.github.nuclearfarts.gravestone.GravestoneMod;
+import io.github.nuclearfarts.gravestone.PlacementContextAccess;
 import io.github.nuclearfarts.gravestone.mixin.BlockAccessor;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.ServerTask;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -81,7 +80,11 @@ public final class GravestoneUtil {
 	
 	public static boolean canPlaceGrave(World world, BlockPos pos) {
 		BlockState state = world.getBlockState(pos);
-		return !(pos.getY() < 0 || pos.getY() > 255) && (state.isAir() || state.canReplace(new ItemPlacementContext(new ItemUsageContext(null, Hand.MAIN_HAND, new BlockHitResult(new Vec3d(pos), Direction.UP, pos, true)))) || !((BlockAccessor)state.getBlock()).getCollidable());
+		try {
+			return !(pos.getY() < 0 || pos.getY() > 255) && (state.isAir() || state.canReplace(new PlacementContextAccess(world, null, Hand.MAIN_HAND, ItemStack.EMPTY, new BlockHitResult(new Vec3d(pos), Direction.UP, pos, true))) || !((BlockAccessor)state.getBlock()).getCollidable()); }
+		catch(NullPointerException e) {
+			 return false;
+		 }
 	}
 	
 	
