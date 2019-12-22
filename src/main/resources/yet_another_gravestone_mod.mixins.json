@@ -4,6 +4,7 @@
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
 		"PlayerEntityMixin",
+		"LivingEntityMixin",
 		"BlockAccessor"
 	],
 	"injectors": {

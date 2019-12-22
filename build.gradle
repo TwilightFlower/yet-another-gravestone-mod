@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.2.6-SNAPSHOT'
+	id 'fabric-loom' version '0.2.7-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -31,6 +31,13 @@ dependencies {
 	//mods i do compat with
 	modCompileOnly("com.github.emilyploszaj:trinkets:${trinkets_version}") {
 		exclude module: 'fabric-api' //why do people still have transitive api :irritatered:
+	}
+	
+	modCompileOnly("com.github.Ladysnake.Requiem:Requiem:1.1.0:api") {
+		exclude module: 'fabric-api'
+	}
+	modRuntime("com.github.Ladysnake.Requiem:Requiem:1.1.0") {
+		exclude module: 'fabric-api'
 	}
 }
 
