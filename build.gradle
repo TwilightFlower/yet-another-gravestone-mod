@@ -36,9 +36,9 @@ dependencies {
 	modCompileOnly("com.github.Ladysnake.Requiem:Requiem:1.1.0:api") {
 		exclude module: 'fabric-api'
 	}
-	modRuntime("com.github.Ladysnake.Requiem:Requiem:1.1.0") {
+	/*modRuntime("com.github.Ladysnake.Requiem:Requiem:1.1.0") { temporarily disabled for snapshot testing
 		exclude module: 'fabric-api'
-	}
+	}*/
 }
 
 processResources {

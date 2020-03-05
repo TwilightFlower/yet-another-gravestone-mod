@@ -37,7 +37,7 @@ public class GravestoneMod implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Registry.register(Registry.BLOCK, id("gravestone"), GRAVESTONE);
-		Registry.register(Registry.BLOCK_ENTITY, id("gravestone"), GRAVESTONE_BLOCK_ENTITY);
+		Registry.register(Registry.BLOCK_ENTITY_TYPE, id("gravestone"), GRAVESTONE_BLOCK_ENTITY);
 		
 		addHandlerIfLoaded("trinkets", TrinketsGravestoneDropHandler::new);
 		

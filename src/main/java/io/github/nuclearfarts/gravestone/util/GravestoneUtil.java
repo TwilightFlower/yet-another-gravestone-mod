@@ -36,7 +36,7 @@ public final class GravestoneUtil {
 			player.inventory.armor.clear();
 			player.inventory.offHand.clear();
 			GravestoneMod.runDropHandlers(player, items);
-			BlockPos gravePos = findGravePos(world, player.getBlockPos());
+			BlockPos gravePos = findGravePos(world, new BlockPos(player.getPos()));
 			world.getServer().send(new ServerTask(world.getServer().getTicks(), placeGraveRunnable(world, gravePos, items)));
 		}
 	}
@@ -81,7 +81,7 @@ public final class GravestoneUtil {
 	public static boolean canPlaceGrave(World world, BlockPos pos) {
 		BlockState state = world.getBlockState(pos);
 		try {
-			return !(pos.getY() < 0 || pos.getY() > 255) && (state.isAir() || state.canReplace(new PlacementContextAccess(world, null, Hand.MAIN_HAND, ItemStack.EMPTY, new BlockHitResult(new Vec3d(pos), Direction.UP, pos, true))) || !((BlockAccessor)state.getBlock()).getCollidable()); }
+			return !(pos.getY() < 0 || pos.getY() > 255) && (state.isAir() || state.canReplace(new PlacementContextAccess(world, null, Hand.MAIN_HAND, ItemStack.EMPTY, new BlockHitResult(new Vec3d(pos.getX(), pos.getY(), pos.getZ()), Direction.UP, pos, true))) || !((BlockAccessor)state.getBlock()).getCollidable()); }
 		catch(NullPointerException e) {
 			 return false;
 		 }
@@ -90,7 +90,7 @@ public final class GravestoneUtil {
 	
 	public static BlockPos drop(World world, BlockPos pos) {
 		DimensionType dimension = world.dimension.getType();
-		BlockPos.Mutable searchPos = new BlockPos.Mutable(pos);
+		BlockPos.Mutable searchPos = new BlockPos.Mutable().set(pos);
 		int i = 0;
 		for(int y = pos.getY() - 1; y > 1 && i < 10; y--) {
 			i++;
