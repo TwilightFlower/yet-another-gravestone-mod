@@ -37,7 +37,7 @@ public final class GravestoneUtil {
 			player.inventory.offHand.clear();
 			GravestoneMod.runDropHandlers(player, items);
 			BlockPos gravePos = findGravePos(world, new BlockPos(player.getPos()));
-			world.getServer().send(new ServerTask(world.getServer().getTicks(), placeGraveRunnable(world, gravePos, items)));
+			world.getServer().send(new ServerTask(world.getServer().getTicks(), placeGraveRunnable(world, gravePos, items, player.totalExperience)));
 		}
 	}
 	
@@ -103,11 +103,12 @@ public final class GravestoneUtil {
 		return pos;
 	}
 	
-	public static Runnable placeGraveRunnable(World world, BlockPos pos, List<ItemStack> inv) {
+	public static Runnable placeGraveRunnable(World world, BlockPos pos, List<ItemStack> inv, int xp) {
 		return () -> {
 			world.setBlockState(pos, GravestoneMod.GRAVESTONE.getDefaultState());
 			GravestoneBlockEntity be = (GravestoneBlockEntity) world.getBlockEntity(pos);
 			be.inventory = inv;
+			be.xp = xp;
 			be.markDirty();
 		};
 	}
