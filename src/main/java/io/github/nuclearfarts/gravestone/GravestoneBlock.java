@@ -3,8 +3,8 @@ package io.github.nuclearfarts.gravestone;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.EntityContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -25,6 +25,7 @@ public class GravestoneBlock extends Block implements BlockEntityProvider {
 		return new GravestoneBlockEntity();
 	}
 	
+	@Override
 	public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity be, ItemStack stack) {
 		for(ItemStack s : ((GravestoneBlockEntity)be).inventory) {
 			Block.dropStack(world, pos, s);
@@ -32,7 +33,8 @@ public class GravestoneBlock extends Block implements BlockEntityProvider {
 		player.addExperience(((GravestoneBlockEntity)be).xp);
 	}
 	
-	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, EntityContext ctx) {
+	@Override
+	public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, ShapeContext ctx) {
 		return SHAPE;
 	}
 }

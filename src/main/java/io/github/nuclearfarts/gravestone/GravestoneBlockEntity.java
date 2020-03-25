@@ -18,6 +18,7 @@ public class GravestoneBlockEntity extends BlockEntity {
 		super(GravestoneMod.GRAVESTONE_BLOCK_ENTITY);
 	}
 	
+	@Override
 	public void fromTag(CompoundTag tag) {
 		super.fromTag(tag);
 		inventory.clear();
@@ -30,6 +31,7 @@ public class GravestoneBlockEntity extends BlockEntity {
 		xp = tag.getInt("XP");
 	}
 	
+	@Override
 	public CompoundTag toTag(CompoundTag tag) {
 		super.toTag(tag);
 		ListTag list = new ListTag();
