@@ -12,8 +12,8 @@ public class TrinketsGravestoneDropHandler implements GravestoneDropHandler {
 	@Override
 	public void handle(PlayerEntity player, List<ItemStack> gravestoneInventory) {
 		Inventory trinkets = TrinketsApi.getTrinketsInventory(player);
-		for(int i = 0; i < trinkets.getInvSize(); i++) {
-			gravestoneInventory.add(trinkets.removeInvStack(i));
+		for(int i = 0; i < trinkets.size(); i++) {
+			gravestoneInventory.add(trinkets.removeStack(i));
 		}
 	}
 

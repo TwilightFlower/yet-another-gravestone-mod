@@ -22,7 +22,7 @@
 		"yet_another_gravestone_mod.mixins.json"
 	],
 	"depends": {
-		"minecraft": "1.16-alpha.20.12.a",
+		"minecraft": ">=1.16-alpha.20.13.a",
 		"fabric-resource-loader-v0": "*"
 	}
 }

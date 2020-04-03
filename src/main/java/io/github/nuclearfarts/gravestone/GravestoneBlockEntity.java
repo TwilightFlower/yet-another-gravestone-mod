@@ -3,6 +3,7 @@ package io.github.nuclearfarts.gravestone;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -19,8 +20,8 @@ public class GravestoneBlockEntity extends BlockEntity {
 	}
 	
 	@Override
-	public void fromTag(CompoundTag tag) {
-		super.fromTag(tag);
+	public void fromTag(BlockState state, CompoundTag tag) {
+		super.fromTag(state, tag);
 		inventory.clear();
 		ListTag stacks = (ListTag)tag.get("Items");
 		if(stacks != null) {
