@@ -14,7 +14,7 @@ import io.github.nuclearfarts.gravestone.util.GravestoneUtil;
 public abstract class PlayerEntityMixin extends PlayerEntity {
 
 	private PlayerEntityMixin() {
-		super(null, null);
+		super(null, null, null);
 		throw new RuntimeException("wtf");
 	}
 

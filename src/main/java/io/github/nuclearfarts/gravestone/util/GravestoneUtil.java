@@ -20,14 +20,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 public final class GravestoneUtil {
 	private GravestoneUtil() {};
 	
 	public static void placeGrave(PlayerEntity player) {
 		World world = player.world;
-		if(!world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
+		if(!world.getGameRules().getBoolean(GameRules.field_19389)) {
 			List<ItemStack> items = new ArrayList<>();
 			items.addAll(player.inventory.main);
 			items.addAll(player.inventory.armor);
@@ -42,15 +41,14 @@ public final class GravestoneUtil {
 	}
 	
 	public static BlockPos findGravePos(World world, BlockPos player) {
-		DimensionType dimension = world.dimension.getType();
-		BlockPos playerPos = new BlockPos(player.getX(), clampY(dimension, player.getY()), player.getZ());
+		BlockPos playerPos = new BlockPos(player.getX(), clampY(world, player.getY()), player.getZ());
 		if(canPlaceGrave(world, playerPos)) {
 			return playerPos;
 		}
 		BlockPos.Mutable checkPos = new BlockPos.Mutable();
 		for(int x = playerPos.getX() + 5; x >= playerPos.getX() - 5; x--) {
 			checkPos.setX(x);
-			for(int y = clampY(dimension, playerPos.getY()) + 5; y >= clampY(dimension, playerPos.getY()) - 5; y--) {
+			for(int y = clampY(world, playerPos.getY()) + 5; y >= clampY(world, playerPos.getY()) - 5; y--) {
 				checkPos.setY(y);
 				for(int z = playerPos.getZ() + 5; z >= playerPos.getZ() - 5; z--) {
 					checkPos.setZ(z);
@@ -61,7 +59,7 @@ public final class GravestoneUtil {
 			}
 		}
 		checkPos.set(playerPos);
-		checkPos.setY(clampY(dimension, playerPos.getY()));
+		checkPos.setY(clampY(world, playerPos.getY()));
 		while(world.getBlockState(checkPos).getBlock() == Blocks.BEDROCK) {
 			checkPos.setY(checkPos.getY() + 1);
 		}
@@ -69,8 +67,8 @@ public final class GravestoneUtil {
 	}
 	
 	
-	public static int clampY(DimensionType dimension, int y) {
-		if(dimension == DimensionType.THE_NETHER && y < 127) { //don't spawn on nether ceiling, unless the player is already there.
+	public static int clampY(World world, int y) {
+		if(world.getRegistryKey() == World.NETHER && y < 127) { //don't spawn on nether ceiling, unless the player is already there.
 			return MathHelper.clamp(y, 1, 126); //clamp to 1 -- don't spawn graves the layer right above the void, so players can actually recover their items.
 		} else {
 			return MathHelper.clamp(y, 1, 255);
@@ -89,14 +87,13 @@ public final class GravestoneUtil {
 	
 	
 	public static BlockPos drop(World world, BlockPos pos) {
-		DimensionType dimension = world.dimension.getType();
 		BlockPos.Mutable searchPos = new BlockPos.Mutable().set(pos);
 		int i = 0;
 		for(int y = pos.getY() - 1; y > 1 && i < 10; y--) {
 			i++;
-			searchPos.setY(clampY(dimension, y));
+			searchPos.setY(clampY(world, y));
 			if(!world.getBlockState(searchPos).isAir()) {
-				searchPos.setY(clampY(dimension, y + 1));
+				searchPos.setY(clampY(world, y + 1));
 				return searchPos.toImmutable();
 			}
 		}
